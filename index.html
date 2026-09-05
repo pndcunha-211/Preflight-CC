@@ -3,35 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <title>My First Build</title>
+<script>
+  (function () {
+    try {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch (e) {}
+  })();
+</script>
 <style>
+  :root {
+    --bg-start: #ffd76a;
+    --bg-mid: #f5b731;
+    --bg-end: #d99a1f;
+    --texture: rgba(0, 0, 0, 0.035);
+    --title-color: #1e5eff;
+    --glow-a: rgba(30, 94, 255, 0.4);
+    --glow-b: rgba(30, 94, 255, 0.3);
+    --glow-c: rgba(30, 94, 255, 0.8);
+    --glow-d: rgba(30, 94, 255, 0.6);
+    --toggle-border: #1e5eff;
+    --toggle-track: rgba(30, 94, 255, 0.12);
+    --toggle-thumb: #1e5eff;
+    --label-color: #16305e;
+  }
+
+  :root[data-theme="dark"] {
+    --bg-start: #16294a;
+    --bg-mid: #101d33;
+    --bg-end: #0a1424;
+    --texture: rgba(255, 255, 255, 0.035);
+    --title-color: #f2b98a;
+    --glow-a: rgba(242, 185, 138, 0.4);
+    --glow-b: rgba(242, 185, 138, 0.3);
+    --glow-c: rgba(242, 185, 138, 0.85);
+    --glow-d: rgba(242, 185, 138, 0.6);
+    --toggle-border: #e8975c;
+    --toggle-track: rgba(232, 151, 92, 0.2);
+    --toggle-thumb: #e8975c;
+    --label-color: #f2b98a;
+  }
+
+  * { box-sizing: border-box; }
+
   body {
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    background:
+      repeating-linear-gradient(135deg, var(--texture) 0px, var(--texture) 2px, transparent 2px, transparent 7px),
+      radial-gradient(circle, var(--bg-start) 0%, var(--bg-mid) 55%, var(--bg-end) 100%);
+    transition: background-color 0.3s ease;
+  }
+
+  header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 18px 28px;
+  }
+
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .theme-toggle-label {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--label-color);
+  }
+
+  .theme-toggle input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .theme-toggle .track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border: 1px solid var(--toggle-border);
+    border-radius: 999px;
+    background: var(--toggle-track);
+    transition: background 0.2s ease;
+  }
+
+  .theme-toggle .thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--toggle-thumb);
+    transition: transform 0.2s ease;
+  }
+
+  .theme-toggle input:checked + .track .thumb {
+    transform: translateX(20px);
+  }
+
+  main {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, #ffd76a 0%, #f5b731 55%, #d99a1f 100%);
   }
+
   h1 {
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 5rem;
-    color: #1e5eff;
+    color: var(--title-color);
     margin: 0;
     animation: glow 2.5s ease-in-out infinite alternate;
   }
+
   @keyframes glow {
     from {
-      text-shadow: 0 0 10px rgba(30, 94, 255, 0.4),
-                   0 0 20px rgba(30, 94, 255, 0.3);
+      text-shadow: 0 0 10px var(--glow-a), 0 0 20px var(--glow-b);
     }
     to {
-      text-shadow: 0 0 25px rgba(30, 94, 255, 0.8),
-                   0 0 50px rgba(30, 94, 255, 0.6);
+      text-shadow: 0 0 25px var(--glow-c), 0 0 50px var(--glow-d);
     }
   }
 </style>
 </head>
 <body>
-  <h1>My First Build</h1>
+  <header>
+    <label class="theme-toggle" aria-label="Toggle dark mode">
+      <span class="theme-toggle-label">Dark mode</span>
+      <input type="checkbox" id="theme-toggle-input">
+      <span class="track"><span class="thumb"></span></span>
+    </label>
+  </header>
+  <main>
+    <h1>My First Build</h1>
+  </main>
+  <script>
+    (function () {
+      var checkbox = document.getElementById('theme-toggle-input');
+      checkbox.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+      checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          try { localStorage.setItem('theme', 'light'); } catch (e) {}
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
